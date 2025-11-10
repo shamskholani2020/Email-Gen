@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gmail Alias Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --color-white: rgba(255, 255, 255, 1);
+      --color-black: rgba(0, 0, 0, 1);
+      --color-cream-50: rgba(252, 252, 249, 1);
+      --color-cream-100: rgba(255, 255, 253, 1);
+      --color-gray-200: rgba(245, 245, 245, 1);
+      --color-gray-300: rgba(167, 169, 169, 1);
+      --color-gray-400: rgba(119, 124, 124, 1);
+      --color-slate-500: rgba(98, 108, 113, 1);
+      --color-brown-600: rgba(94, 82, 64, 1);
+      --color-charcoal-700: rgba(31, 33, 33, 1);
+      --color-charcoal-800: rgba(38, 40, 40, 1);
+      --color-slate-900: rgba(19, 52, 59, 1);
+      --color-teal-300: rgba(50, 184, 198, 1);
+      --color-teal-400: rgba(45, 166, 178, 1);
+      --color-teal-500: rgba(33, 128, 141, 1);
+      --color-teal-600: rgba(29, 116, 128, 1);
+      --color-teal-700: rgba(26, 104, 115, 1);
+      --color-brown-600-rgb: 94, 82, 64;
+      --color-teal-500-rgb: 33, 128, 141;
+      --color-slate-900-rgb: 19, 52, 59;
+      --color-background: var(--color-cream-50);
+      --color-surface: var(--color-cream-100);
+      --color-text: var(--color-slate-900);
+      --color-text-secondary: var(--color-slate-500);
+      --color-primary: var(--color-teal-500);
+      --color-primary-hover: var(--color-teal-600);
+      --color-primary-active: var(--color-teal-700);
+      --color-border: rgba(var(--color-brown-600-rgb), 0.2);
+      --color-card-border: rgba(var(--color-brown-600-rgb), 0.12);
+      --radius-base: 8px;
+      --radius-lg: 12px;
+      --space-8: 8px;
+      --space-12: 12px;
+      --space-16: 16px;
+      --space-24: 24px;
+      --font-family-base: "FKGroteskNeue", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-gray-400-rgb: 119, 124, 124;
+        --color-teal-300-rgb: 50, 184, 198;
+        --color-gray-300-rgb: 167, 169, 169;
+        --color-gray-200-rgb: 245, 245, 245;
+        --color-background: var(--color-charcoal-700);
+        --color-surface: var(--color-charcoal-800);
+        --color-text: var(--color-gray-200);
+        --color-text-secondary: rgba(var(--color-gray-300-rgb), 0.7);
+        --color-primary: var(--color-teal-300);
+        --color-primary-hover: var(--color-teal-400);
+        --color-border: rgba(var(--color-gray-400-rgb), 0.3);
+        --color-card-border: rgba(var(--color-gray-400-rgb), 0.2);
+      }
+    }
+
+    @font-face {
+      font-family: 'FKGroteskNeue';
+      src: url('https://r2cdn.perplexity.ai/fonts/FKGroteskNeue.woff2') format('woff2');
+    }
+
+    body {
+      font-family: var(--font-family-base);
+      background-color: var(--color-background);
+      color: var(--color-text);
+      margin: 0;
+      padding: 0;
+    }
+
+    .card {
+      background-color: var(--color-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-card-border);
+      padding: var(--space-24);
+    }
+
+    .btn {
+      padding: var(--space-12) var(--space-24);
+      border-radius: var(--radius-base);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-family: var(--font-family-base);
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(var(--color-teal-500-rgb), 0.1);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: var(--space-12);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-base);
+      font-size: 14px;
+      background-color: var(--color-surface);
+      color: var(--color-text);
+      font-family: var(--font-family-base);
+    }
+
+    .input-field:focus {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 0;
+    }
+
+    .email-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-12);
+      border-bottom: 1px solid var(--color-border);
+      gap: var(--space-12);
+    }
+
+    .email-item:last-child {
+      border-bottom: none;
+    }
+
+    .email-list {
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-base);
+      margin-top: var(--space-16);
+    }
+
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--color-primary);
+      color: white;
+      padding: var(--space-16) var(--space-24);
+      border-radius: var(--radius-base);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .info-box {
+      background: rgba(var(--color-teal-500-rgb), 0.1);
+      border: 1px solid rgba(var(--color-teal-500-rgb), 0.3);
+      border-radius: var(--radius-base);
+      padding: var(--space-16);
+      margin-bottom: var(--space-24);
+    }
+
+    .label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: var(--space-8);
+      font-size: 14px;
+    }
+
+    .error-text {
+      color: #ef4444;
+      font-size: 13px;
+      margin-top: var(--space-8);
+    }
+
+    .tab-btn {
+      padding: var(--space-12) var(--space-24);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      transition: all 0.2s;
+      font-family: var(--font-family-base);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-btn:hover {
+      color: var(--color-text);
+    }
+
+    .tab-btn.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    .tab-content {
+      animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .badge {
+      background: var(--color-primary);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .tab-btn:not(.active) .badge {
+      background: rgba(var(--color-teal-500-rgb), 0.2);
+      color: var(--color-text-secondary);
+    }
+
+    .pagination-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--space-16);
+      padding-top: var(--space-16);
+      border-top: 1px solid var(--color-border);
+      flex-wrap: wrap;
+      gap: var(--space-12);
+    }
+
+    .pagination-info {
+      color: var(--color-text-secondary);
+      font-size: 13px;
+    }
+
+    .pagination-buttons {
+      display: flex;
+      gap: var(--space-8);
+      align-items: center;
+    }
+
+    .pagination-buttons button {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .pagination-buttons button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .page-jump {
+      display: flex;
+      gap: var(--space-8);
+      align-items: center;
+    }
+
+    .page-jump input {
+      width: 60px;
+      padding: 6px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    .page-jump button {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .history-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-12);
+      border-bottom: 1px solid var(--color-border);
+      gap: var(--space-12);
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    .history-details {
+      flex: 1;
+    }
+
+    .history-email {
+      font-weight: 500;
+      margin-bottom: 4px;
+      word-break: break-all;
+    }
+
+    .history-meta {
+      display: flex;
+      gap: var(--space-16);
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      flex-wrap: wrap;
+    }
+
+    .domain-badge {
+      background: rgba(var(--color-teal-500-rgb), 0.15);
+      color: var(--color-primary);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    .copy-count {
+      background: rgba(var(--color-teal-500-rgb), 0.15);
+      color: var(--color-primary);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 11px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: var(--space-24);
+      color: var(--color-text-secondary);
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: var(--space-12);
+    }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+  <div class="max-w-4xl mx-auto">
+    <div class="card">
+      <h1 class="text-3xl font-semibold mb-2">Email Alias Generator</h1>
+      <p class="text-sm" style="color: var(--color-text-secondary); margin-bottom: 24px;">Generate all possible email variations using dot and plus tricks for Gmail or your custom domain</p>
+
+      <div class="info-box">
+        <h3 class="font-semibold mb-2 text-sm">How it works:</h3>
+        <ul class="text-sm space-y-1" style="color: var(--color-text-secondary); margin: 0; padding-left: 20px;">
+          <li><strong>Dot trick:</strong> Gmail ignores dots in usernames (e.mail = email = e.m.a.i.l)</li>
+          <li><strong>Plus trick:</strong> Add +anything after your username (email+shopping, email+work)</li>
+          <li><strong>Custom domains:</strong> Enter your domain to generate aliases for it (requires catch-all email forwarding)</li>
+          <li>All variations deliver to the same inbox - perfect for filtering &amp; organization!</li>
+        </ul>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="label" for="emailInput">Email Address or Username</label>
+          <input 
+            type="text" 
+            id="emailInput" 
+            class="input-field" 
+            placeholder="your.email@gmail.com or just 'username'"
+            aria-label="Email address or username input"
+          />
+          <p class="text-xs mt-1" style="color: var(--color-text-secondary);">Enter full email or just username (leave domain blank for Gmail)</p>
+        </div>
+
+        <div>
+          <label class="label" for="domainInput">Custom Domain (Optional)</label>
+          <input 
+            type="text" 
+            id="domainInput" 
+            class="input-field" 
+            placeholder="example.com"
+            aria-label="Custom domain input"
+          />
+          <p class="text-xs mt-1" style="color: var(--color-text-secondary);">Leave blank for Gmail. For custom domains, ensure catch-all forwarding is enabled.</p>
+          <div id="errorMessage" class="error-text" style="display: none;"></div>
+        </div>
+
+        <div>
+          <label class="label" for="plusVariations">Maximum Plus Variations</label>
+          <input 
+            type="number" 
+            id="plusVariations" 
+            class="input-field" 
+            value="5" 
+            min="0" 
+            max="20"
+            aria-label="Maximum plus variations"
+          />
+          <p class="text-xs mt-1" style="color: var(--color-text-secondary);">Generate +1, +2, +3... up to this number for each dot variation</p>
+        </div>
+
+        <div class="flex gap-3 flex-wrap">
+          <button id="generateBtn" class="btn btn-primary flex-1 md:flex-none">Generate Aliases</button>
+          <button id="clearBtn" class="btn btn-secondary flex-1 md:flex-none">Clear</button>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div id="tabsSection" style="display: none; margin-top: 24px;">
+        <div class="flex gap-2 border-b" style="border-color: var(--color-border); margin-bottom: 20px;">
+          <button id="generatedTab" class="tab-btn active" onclick="switchTab('generated')">
+            Generated Results <span id="generatedBadge" class="badge">0</span>
+          </button>
+          <button id="historyTab" class="tab-btn" onclick="switchTab('history')">
+            History <span id="historyBadge" class="badge">0</span>
+          </button>
+        </div>
+
+        <!-- Generated Results Tab -->
+        <div id="generatedTabContent" class="tab-content">
+          <div class="flex justify-between items-center mb-3 flex-wrap gap-2">
+            <h2 class="text-lg font-semibold">
+              Generated Aliases (<span id="emailCount">0</span>)
+            </h2>
+            <button id="copyAllBtn" class="btn btn-primary">Copy All</button>
+          </div>
+          <div id="emailList" class="email-list"></div>
+          
+          <!-- Pagination for Generated Results -->
+          <div id="generatedPagination" class="pagination-controls" style="display: none;"></div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="historyTabContent" class="tab-content" style="display: none;">
+          <div class="info-box" style="margin-bottom: 16px;">
+            <p class="text-sm" style="color: var(--color-text-secondary); margin: 0;">
+              📋 Track your copied emails here! Each time you copy an email, it's added to this history with a timestamp and copy count.
+            </p>
+          </div>
+          
+          <div class="flex justify-between items-center mb-3 flex-wrap gap-2">
+            <h2 class="text-lg font-semibold">
+              Copy History (<span id="historyCount">0</span> unique)
+            </h2>
+            <button id="clearHistoryBtn" class="btn btn-secondary">Clear History</button>
+          </div>
+          
+          <div id="historyList" class="email-list"></div>
+          
+          <!-- Pagination for History -->
+          <div id="historyPagination" class="pagination-controls" style="display: none;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let generatedEmails = [];
+    let historyDB = []; // In-memory database for copied emails
+    let currentPage = 1;
+    let historyPage = 1;
+    const itemsPerPage = 10;
+    let activeTab = 'generated'; // 'generated' or 'history'
+
+    function validateInput(input, customDomain) {
+      // If custom domain is provided, validate it
+      if (customDomain) {
+        const domainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]?\.[a-zA-Z]{2,}$/;
+        if (!domainRegex.test(customDomain)) {
+          return { valid: false, message: 'Please enter a valid domain (e.g., example.com)' };
+        }
+      }
+      
+      // Check if input is a full email or just username
+      if (input.includes('@')) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(input)) {
+          return { valid: false, message: 'Please enter a valid email address' };
+        }
+        
+        // If no custom domain, ensure it's Gmail
+        if (!customDomain) {
+          const domain = input.split('@')[1].toLowerCase();
+          if (domain !== 'gmail.com' && domain !== 'googlemail.com') {
+            return { valid: false, message: 'Please enter a Gmail address or provide a custom domain' };
+          }
+        }
+      } else {
+        // Just username - validate format
+        const usernameRegex = /^[a-zA-Z0-9.]+$/;
+        if (!usernameRegex.test(input)) {
+          return { valid: false, message: 'Username can only contain letters, numbers, and dots' };
+        }
+      }
+      
+      return { valid: true };
+    }
+
+    function generateDotVariations(username) {
+      const variations = new Set();
+      const len = username.length;
+      
+      // Generate all possible combinations of dot placements
+      const totalCombinations = Math.pow(2, len - 1);
+      
+      for (let i = 0; i < totalCombinations; i++) {
+        let variation = username[0];
+        for (let j = 1; j < len; j++) {
+          if (i & (1 << (j - 1))) {
+            variation += '.';
+          }
+          variation += username[j];
+        }
+        variations.add(variation);
+      }
+      
+      return Array.from(variations);
+    }
+
+    function generateAliases(input, customDomain, maxPlus) {
+      let username, domain;
+      
+      // Parse input
+      if (input.includes('@')) {
+        [username, domain] = input.split('@');
+      } else {
+        username = input;
+        domain = customDomain || 'gmail.com';
+      }
+      
+      // Override with custom domain if provided
+      if (customDomain) {
+        domain = customDomain;
+      }
+      
+      // Remove existing dots to get base username
+      const baseUsername = username.replace(/\./g, '');
+      
+      // Generate all dot variations
+      const dotVariations = generateDotVariations(baseUsername);
+      
+      const allAliases = [];
+      
+      // For each dot variation, create plus variations
+      dotVariations.forEach(dotVariation => {
+        // Add the base dot variation (no plus)
+        allAliases.push(`${dotVariation}@${domain}`);
+        
+        // Add plus variations
+        for (let i = 1; i <= maxPlus; i++) {
+          allAliases.push(`${dotVariation}+${i}@${domain}`);
+        }
+      });
+      
+      return { aliases: allAliases, domain: domain };
+    }
+
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'notification';
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        notification.remove();
+      }, 3000);
+    }
+
+    async function copyToClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        showNotification('Copied to clipboard!');
+      } catch (err) {
+        // Fallback for older browsers
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showNotification('Copied to clipboard!');
+      }
+    }
+
+    function addToHistory(email, domain) {
+      const existing = historyDB.find(item => item.email === email);
+      
+      if (existing) {
+        existing.count++;
+        existing.lastCopied = new Date().toISOString();
+      } else {
+        historyDB.push({
+          email: email,
+          domain: domain || 'gmail.com',
+          count: 1,
+          lastCopied: new Date().toISOString()
+        });
+      }
+      
+      updateHistoryDisplay();
+      updateHistoryBadge();
+    }
+
+    function formatTimestamp(isoString) {
+      const date = new Date(isoString);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+      
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
+      if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+      if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+      
+      return date.toLocaleDateString();
+    }
+
+    function updateHistoryDisplay() {
+      const historyList = document.getElementById('historyList');
+      const historyCount = document.getElementById('historyCount');
+      
+      historyCount.textContent = historyDB.length;
+      
+      if (historyDB.length === 0) {
+        historyList.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <p>No emails copied yet</p>
+            <p class="text-xs" style="margin-top: 8px;">Copy emails from the Generated Results tab to track them here</p>
+          </div>
+        `;
+        document.getElementById('historyPagination').style.display = 'none';
+        return;
+      }
+      
+      // Pagination
+      const totalPages = Math.ceil(historyDB.length / itemsPerPage);
+      const startIdx = (historyPage - 1) * itemsPerPage;
+      const endIdx = startIdx + itemsPerPage;
+      const pageItems = historyDB.slice(startIdx, endIdx);
+      
+      historyList.innerHTML = '';
+      
+      pageItems.forEach(item => {
+        const historyItem = document.createElement('div');
+        historyItem.className = 'history-item';
+        
+        const domainDisplay = item.domain || 'gmail.com';
+        const isGmail = domainDisplay === 'gmail.com' || domainDisplay === 'googlemail.com';
+        
+        historyItem.innerHTML = `
+          <div class="history-details">
+            <div class="history-email text-sm">${item.email}</div>
+            <div class="history-meta">
+              <span class="domain-badge">🌐 ${domainDisplay}</span>
+              <span>🕒 ${formatTimestamp(item.lastCopied)}</span>
+              <span class="copy-count">📋 ${item.count} ${item.count === 1 ? 'copy' : 'copies'}</span>
+            </div>
+          </div>
+        `;
+        
+        historyList.appendChild(historyItem);
+      });
+      
+      // Update pagination
+      if (totalPages > 1) {
+        updatePaginationControls('history', historyPage, totalPages);
+        document.getElementById('historyPagination').style.display = 'flex';
+      } else {
+        document.getElementById('historyPagination').style.display = 'none';
+      }
+    }
+
+    function updateHistoryBadge() {
+      document.getElementById('historyBadge').textContent = historyDB.length;
+    }
+
+    let currentDomain = 'gmail.com'; // Track current domain for history
+
+    function displayEmails(emails, domain) {
+      currentDomain = domain || 'gmail.com';
+      const totalPages = Math.ceil(emails.length / itemsPerPage);
+      const startIdx = (currentPage - 1) * itemsPerPage;
+      const endIdx = startIdx + itemsPerPage;
+      const pageEmails = emails.slice(startIdx, endIdx);
+      
+      const emailList = document.getElementById('emailList');
+      emailList.innerHTML = '';
+      
+      pageEmails.forEach(email => {
+        const item = document.createElement('div');
+        item.className = 'email-item';
+        
+        const emailText = document.createElement('span');
+        emailText.textContent = email;
+        emailText.className = 'flex-1 break-all text-sm';
+        
+        const copyBtn = document.createElement('button');
+        copyBtn.textContent = 'Copy';
+        copyBtn.className = 'btn btn-secondary text-xs px-3 py-1';
+        copyBtn.style.flexShrink = '0';
+        copyBtn.onclick = () => {
+          copyToClipboard(email);
+          addToHistory(email, currentDomain);
+          showNotification('Added to history!');
+        };
+        
+        item.appendChild(emailText);
+        item.appendChild(copyBtn);
+        emailList.appendChild(item);
+      });
+      
+      document.getElementById('emailCount').textContent = emails.length;
+      document.getElementById('generatedBadge').textContent = emails.length;
+      document.getElementById('tabsSection').style.display = 'block';
+      
+      // Update pagination
+      if (totalPages > 1) {
+        updatePaginationControls('generated', currentPage, totalPages);
+        document.getElementById('generatedPagination').style.display = 'flex';
+      } else {
+        document.getElementById('generatedPagination').style.display = 'none';
+      }
+    }
+
+    function updatePaginationControls(type, page, totalPages) {
+      const paginationId = type === 'generated' ? 'generatedPagination' : 'historyPagination';
+      const paginationDiv = document.getElementById(paginationId);
+      
+      paginationDiv.innerHTML = `
+        <div class="pagination-info">
+          Page ${page} of ${totalPages}
+        </div>
+        <div class="pagination-buttons">
+          <button class="btn btn-secondary" onclick="changePage('${type}', ${page - 1})" ${page === 1 ? 'disabled' : ''}>
+            ← Previous
+          </button>
+          <button class="btn btn-secondary" onclick="changePage('${type}', ${page + 1})" ${page === totalPages ? 'disabled' : ''}>
+            Next →
+          </button>
+        </div>
+        <div class="page-jump">
+          <span class="text-xs" style="color: var(--color-text-secondary);">Jump to:</span>
+          <input type="number" id="${type}PageInput" class="input-field" min="1" max="${totalPages}" value="${page}" />
+          <button class="btn btn-secondary" onclick="jumpToPage('${type}')">
+            Go
+          </button>
+        </div>
+      `;
+    }
+
+    function changePage(type, newPage) {
+      if (type === 'generated') {
+        currentPage = newPage;
+        displayEmails(generatedEmails);
+      } else {
+        historyPage = newPage;
+        updateHistoryDisplay();
+      }
+    }
+
+    function jumpToPage(type) {
+      const inputId = type === 'generated' ? 'generatedPageInput' : 'historyPageInput';
+      const input = document.getElementById(inputId);
+      const pageNum = parseInt(input.value);
+      
+      const totalPages = type === 'generated' 
+        ? Math.ceil(generatedEmails.length / itemsPerPage)
+        : Math.ceil(historyDB.length / itemsPerPage);
+      
+      if (pageNum >= 1 && pageNum <= totalPages) {
+        changePage(type, pageNum);
+      } else {
+        showNotification('Invalid page number');
+      }
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      
+      // Update tab buttons
+      document.getElementById('generatedTab').classList.toggle('active', tab === 'generated');
+      document.getElementById('historyTab').classList.toggle('active', tab === 'history');
+      
+      // Update tab content
+      document.getElementById('generatedTabContent').style.display = tab === 'generated' ? 'block' : 'none';
+      document.getElementById('historyTabContent').style.display = tab === 'history' ? 'block' : 'none';
+      
+      // Refresh history display when switching to history tab
+      if (tab === 'history') {
+        updateHistoryDisplay();
+      }
+    }
+
+    function showError(message) {
+      const errorDiv = document.getElementById('errorMessage');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+    }
+
+    function hideError() {
+      document.getElementById('errorMessage').style.display = 'none';
+    }
+
+    document.getElementById('generateBtn').addEventListener('click', () => {
+      hideError();
+      
+      const emailInput = document.getElementById('emailInput').value.trim();
+      const domainInput = document.getElementById('domainInput').value.trim();
+      const maxPlus = parseInt(document.getElementById('plusVariations').value) || 0;
+      
+      if (!emailInput) {
+        showError('Please enter an email address or username');
+        return;
+      }
+      
+      const validation = validateInput(emailInput, domainInput);
+      if (!validation.valid) {
+        showError(validation.message);
+        return;
+      }
+      
+      if (maxPlus < 0 || maxPlus > 20) {
+        showError('Plus variations must be between 0 and 20');
+        return;
+      }
+      
+      const result = generateAliases(emailInput, domainInput, maxPlus);
+      generatedEmails = result.aliases;
+      currentPage = 1; // Reset to first page
+      displayEmails(generatedEmails, result.domain);
+      switchTab('generated'); // Switch to generated tab
+    });
+
+    document.getElementById('copyAllBtn').addEventListener('click', () => {
+      const allEmailsText = generatedEmails.join('\n');
+      copyToClipboard(allEmailsText);
+      
+      // Add all emails to history
+      generatedEmails.forEach(email => addToHistory(email, currentDomain));
+      showNotification(`All ${generatedEmails.length} emails added to history!`);
+    });
+
+    document.getElementById('clearHistoryBtn').addEventListener('click', () => {
+      if (historyDB.length === 0) return;
+      
+      if (confirm(`Are you sure you want to clear all ${historyDB.length} emails from history?`)) {
+        historyDB = [];
+        historyPage = 1;
+        updateHistoryDisplay();
+        updateHistoryBadge();
+        showNotification('History cleared');
+      }
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      document.getElementById('emailInput').value = '';
+      document.getElementById('domainInput').value = '';
+      document.getElementById('plusVariations').value = '5';
+      document.getElementById('tabsSection').style.display = 'none';
+      generatedEmails = [];
+      currentPage = 1;
+      hideError();
+    });
+
+    // Allow Enter key to trigger generate
+    document.getElementById('emailInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('generateBtn').click();
+      }
+    });
+  </script>
+</body>
+</html>
