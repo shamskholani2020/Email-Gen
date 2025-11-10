@@ -1,1 +1,71 @@
-Ii
+<div class="flex gap-2">
+            <input
+              id="yt-url"
+              type="url"
+              placeholder="https://www.youtube.com/watch?v=..."
+              class="w-full rounded-xl border accent-border/40 bg-white/60 dark:bg-gray-900/60 px-4 py-3 text-sm sm:text-base outline-none accent-outline border-gray-200 dark:border-gray-700"
+            />
+            <button id="preview-btn" class="btn rounded-xl px-4 py-3 text-sm font-medium">
+              Preview
+            </button>
+          </div>
+          <p class="text-xs sm:text-sm text-amber-700 dark:text-amber-300 bg-amber-50/80 dark:bg-amber-900/30 border border-amber-200/60 dark:border-amber-700/50 rounded-lg px-3 py-2">
+            This app won’t download from YouTube. Respect creators’ rights and platform terms.
+          </p>
+          <div id="yt-preview" class="hidden mt-2 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700"></div>
+        </div>
+      </section>
+
+      <section class="mt-8 rounded-2xl border accent-border/30 bg-white/70 dark:bg-black/30 backdrop-blur p-5 sm:p-6 border-gray-200 dark:border-gray-700">
+        <div class="flex items-center gap-2 mb-4">
+          <svg class="w-5 h-5 accent-fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 100 18 9 9 0 000-18zm1 4v5.59a2.5 2.5 0 11-2 2.45V10h1v4.59a1.5 1.5 0 101-1.41V7h1z"/></svg>
+          <h2 class="font-semibold">Convert local file to MP3</h2>
+        </div>
+
+        <div id="dropzone"
+             class="group cursor-pointer rounded-2xl border-2 border-dashed accent-border/60 hover:border-solid transition p-6 text-center bg-white/60 dark:bg-gray-900/60">
+          <input id="file-input" type="file" accept="audio/*,video/*" class="hidden" />
+          <div class="flex flex-col items-center gap-3">
+            <svg class="w-10 h-10 opacity-80" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 3c-3.86 0-7 3.14-7 7 0 3.53 2.61 6.45 6 6.93V21l5-4h2c3.86 0 7-3.14 7-7s-3.14-7-7-7h-6zM4 10a8 8 0 0116 0 5 5 0 01-5 5h-1l-3 2.4V15a5 5 0 01-7-5z"/></svg>
+            <div>
+              <p class="font-medium">Drag & drop a file here</p>
+              <p class="text-xs text-gray-600 dark:text-gray-400">or click to choose (audio/video)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 flex items-center gap-3">
+          <button id="convert-btn" class="btn rounded-xl px-4 py-3 text-sm font-medium disabled:opacity-60">
+            Convert to MP3
+          </button>
+          <span id="file-name" class="text-sm text-gray-600 dark:text-gray-300"></span>
+        </div>
+
+        <div id="progress-wrap" class="mt-4 hidden">
+          <div class="flex justify-between mb-1 text-xs">
+            <span>Encoding</span><span id="progress-label">0%</span>
+          </div>
+          <div class="w-full h-2 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
+            <div id="progress-bar" class="h-2 rounded-full accent-bg" style="width:0%"></div>
+          </div>
+          <pre id="log" class="mt-3 text-[11px] sm:text-xs whitespace-pre-wrap max-h-40 overflow-auto bg-black/80 text-white rounded-lg p-3 hidden"></pre>
+        </div>
+
+        <div id="download-wrap" class="mt-4 hidden">
+          <a id="download-link" class="inline-flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold btn" download>
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"><path d="M12 4v10m0 0l4-4m-4 4l-4-4M5 20h14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Download MP3</span>
+          </a>
+        </div>
+      </section>
+
+      <footer class="mt-10 text-xs text-gray-500 dark:text-gray-400">
+        <p>
+          Tip: The accent color adapts to your file/URL for a little flair. Runs fully on-device.
+        </p>
+      </footer>
+    </main>
+
+    <!-- React + ReactDOM (UMD) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.
