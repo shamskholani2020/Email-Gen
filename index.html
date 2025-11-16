@@ -3,55 +3,107 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>How Long Syria Has Been Free</title>
+<title>How long Syria has been free — animated</title>
+
+<!-- GSAP CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" integrity="sha512-0s+rx8+1Vg1QXy2vZ4pUo3qv+ZpYVqgOq6e5Fv2i+6qW6Oj6eD9x3kC6f1w5vC8o7l1Kq8pHk2H3h9u4tq5Yw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <style>
-  :root{--bg:#0f1724;--card:#0b1220;--accent:#8ab4ff;--muted:#9aa7bf}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#e6eef8;background:linear-gradient(180deg,var(--bg),#071022);}
-  .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:32px}
-  .card{background:linear-gradient(180deg,var(--card),#071029);padding:28px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.7);max-width:720px;width:100%;}
-  h1{margin:0 0 8px 0;font-size:20px;color:var(--accent)}
-  p.lead{margin:0 0 16px 0;color:var(--muted)}
-  .counter{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
-  .tile{flex:1 1 120px;background:rgba(255,255,255,0.02);padding:14px;border-radius:10px;text-align:center;min-width:120px}
-  .tile .n{font-size:20px;font-weight:700}
-  .tile .label{font-size:12px;color:var(--muted);margin-top:6px}
-  .controls{display:flex;gap:8px;align-items:center;margin-top:14px}
-  input[type=datetime-local]{background:#071026;border:1px solid rgba(255,255,255,0.04);color:#cfe6ff;padding:8px 10px;border-radius:8px}
-  button{background:linear-gradient(180deg,var(--accent),#6ea5ff);border:none;color:#05243a;padding:8px 12px;border-radius:8px;cursor:pointer}
-  small.note{display:block;margin-top:10px;color:var(--muted)}
-  footer{margin-top:14px;color:var(--muted);font-size:12px}
-  @media (max-width:480px){.tile{flex:1 1 45%}}
+  :root{
+    --bg:#071026;
+    --card:#071029;
+    --accent:#75b9ff;
+    --muted:#9fb1c9;
+    --glass: rgba(255,255,255,0.03);
+    --tile-radius:12px;
+    --gap:14px;
+  }
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#eaf6ff;background:linear-gradient(180deg,var(--bg),#031223);-webkit-font-smoothing:antialiased}
+  .wrap{min-height:100%;display:flex;align-items:flex-start;justify-content:center;padding:36px}
+  .card{background:linear-gradient(180deg,var(--card),#041425);padding:28px;border-radius:14px;box-shadow:0 12px 48px rgba(2,6,23,0.7);max-width:1100px;width:100%;}
+  header{display:flex;align-items:center;gap:16px}
+  h1{margin:0;font-size:20px;color:var(--accent)}
+  p.lead{margin:0;color:var(--muted);font-size:14px}
+  .counter{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px;align-items:stretch}
+  .tile{flex:1 1 120px;background:var(--glass);padding:14px;border-radius:12px;text-align:center;min-width:110px;backdrop-filter: blur(6px);box-shadow:inset 0 1px 0 rgba(255,255,255,0.02);}
+  .tile .n{font-size:20px;font-weight:800;color:#dff3ff}
+  .tile .label{font-size:12px;color:var(--muted);margin-top:8px;text-transform:uppercase;letter-spacing:0.06em}
+  footer{margin-top:16px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .startText{font-weight:600;color:#cfe9ff}
+
+  /* Bento grid */
+  .bento-wrapper{margin-top:22px;display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:120px;gap:var(--gap)}
+  /* layout: one big hero left, four medium tiles on right, two small tiles below */
+  .bento-card{position:relative;border-radius:10px;overflow:hidden;background:#02121a;display:flex;align-items:center;justify-content:center}
+  .bento-card img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.02) translateZ(0)}
+  .caption{position:absolute;left:0;right:0;bottom:0;padding:8px 10px;background:linear-gradient(180deg,transparent,rgba(2,8,14,0.7));color:#e8f7ff;font-size:12px}
+  /* specific layout placements */
+  .big{grid-column:1 / span 7;grid-row:1 / span 2;border-radius:14px}
+  .med1{grid-column:8 / span 5;grid-row:1 / span 1}
+  .med2{grid-column:8 / span 2;grid-row:2 / span 1}
+  .med3{grid-column:10 / span 3;grid-row:2 / span 1}
+  .small1{grid-column:1 / span 4;grid-row:3 / span 1}
+  .small2{grid-column:5 / span 4;grid-row:3 / span 1}
+  .small3{grid-column:9 / span 4;grid-row:3 / span 1}
+
+  /* responsive */
+  @media (max-width:900px){
+    .bento-wrapper{grid-auto-rows:100px}
+    .big{grid-column:1 / span 8}
+    .med1{grid-column:9 / span 4}
+    .med2{grid-column:1 / span 6}
+    .med3{grid-column:7 / span 6}
+  }
+  @media (max-width:640px){
+    .counter{gap:10px}
+    .tile{flex:1 1 45%}
+    .bento-wrapper{grid-template-columns:repeat(6,1fr);grid-auto-rows:100px}
+    .big{grid-column:1 / span 6;grid-row:1 / span 1}
+    .med1{grid-column:1 / span 3;grid-row:2 / span 1}
+    .med2{grid-column:4 / span 3;grid-row:2 / span 1}
+    .med3{grid-column:1 / span 3;grid-row:3 / span 1}
+    .small1{grid-column:4 / span 3;grid-row:3 / span 1}
+    .small2{grid-column:1 / span 2;grid-row:4 / span 1}
+    .small3{grid-column:3 / span 2;grid-row:4 / span 1}
+  }
+
+  /* micro-interactions */
+  .bento-card .overlay{position:absolute;inset:0;background:transparent;transition:background .25s}
+  .bento-card:hover .overlay{background:linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.35))}
+  a.source{color:var(--muted);font-size:12px;text-decoration:underline}
 </style>
 </head>
 <body>
   <div class="wrap">
     <div class="card" role="main" aria-labelledby="title">
-      <h1 id="title">How long since Syria became free?</h1>
-      <p class="lead">Counting from the chosen date/time (default: <strong>Dec 8, 2024 — 06:18</strong>). The display updates every second.</p>
+      <header>
+        <h1 id="title">How long since Syria became free?</h1>
+        <p class="lead">Counting from <span class="startText" id="startText">2024-12-08 06:18 (local)</span> — live, animated, and shareable.</p>
+      </header>
 
-      <div class="controls" aria-hidden="false">
-        <label for="start">Start date/time:</label>
-        <input id="start" type="datetime-local" aria-label="Start date and time">
-        <button id="apply">Apply</button>
-        <button id="reset">Reset</button>
-      </div>
-
-      <div class="counter" id="counter" aria-live="polite" aria-atomic="true">
-        <div class="tile"><div class="n" id="years">0</div><div class="label">years</div></div>
+      <section class="counter" aria-live="polite" aria-atomic="true" id="counter">
+        <div class="tile" aria-hidden="false"><div class="n" id="years">0</div><div class="label">years</div></div>
         <div class="tile"><div class="n" id="months">0</div><div class="label">months</div></div>
         <div class="tile"><div class="n" id="days">0</div><div class="label">days</div></div>
         <div class="tile"><div class="n" id="hours">0</div><div class="label">hours</div></div>
         <div class="tile"><div class="n" id="minutes">0</div><div class="label">minutes</div></div>
         <div class="tile"><div class="n" id="seconds">0</div><div class="label">seconds</div></div>
+      </section>
+
+      <!-- Bento image grid -->
+      <div class="bento-wrapper" id="bento">
+        <!-- cards populated by JS -->
       </div>
 
-      <small class="note">Tip: pick another start date/time if you meant a different milestone.</small>
-      <footer>Start date used: <span id="startText">2024-12-08 06:18:00 (local)</span></footer>
+      <footer>
+        <div>Images & sources shown under each card. Click caption to open original.</div>
+        <div style="text-align:right;color:var(--muted)">Built with GSAP • Animated • Responsive</div>
+      </footer>
     </div>
   </div>
 
 <script>
-// Elements
+/* ======= Counter logic (calendar-aware) ======= */
 const els = {
   years: document.getElementById('years'),
   months: document.getElementById('months'),
@@ -59,27 +111,15 @@ const els = {
   hours: document.getElementById('hours'),
   minutes: document.getElementById('minutes'),
   seconds: document.getElementById('seconds'),
-  startInput: document.getElementById('start'),
-  applyBtn: document.getElementById('apply'),
-  resetBtn: document.getElementById('reset'),
-  startText: document.getElementById('startText')
+  startText: document.getElementById('startText'),
+  bento: document.getElementById('bento'),
 };
 
-// Default start date/time: Dec 8, 2024 06:18 local time
-let startDate = new Date(2024, 11, 8, 6, 18, 0); // month index: 0=Jan => 11 = Dec
+let startDate = new Date(2024, 11, 8, 6, 18, 0); // local (month index: 11 = Dec)
+els.startText.textContent = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-${String(startDate.getDate()).padStart(2,'0')} ${String(startDate.getHours()).padStart(2,'0')}:${String(startDate.getMinutes()).padStart(2,'0')} (local)`;
 
-// Helper to set datetime-local input value from a Date (local)
-function toLocalDatetimeLocalInput(d) {
-  const tzOffset = d.getTimezoneOffset();
-  const local = new Date(d.getTime() - tzOffset*60000);
-  return local.toISOString().slice(0,16);
-}
-els.startInput.value = toLocalDatetimeLocalInput(startDate);
-els.startText.textContent = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-${String(startDate.getDate()).padStart(2,'0')} ${String(startDate.getHours()).padStart(2,'0')}:${String(startDate.getMinutes()).padStart(2,'0')}:00 (local)`;
-
-// Calendar-aware difference
+// calendar-aware diff
 function diffCalendar(start, end) {
-  // copies
   let y = end.getFullYear() - start.getFullYear();
   let m = end.getMonth() - start.getMonth();
   let d = end.getDate() - start.getDate();
@@ -91,7 +131,6 @@ function diffCalendar(start, end) {
   if (mm < 0) { mm += 60; hh -= 1; }
   if (hh < 0) { hh += 24; d -= 1; }
   if (d < 0) {
-    // borrow days from previous month relative to 'end'
     const prevMonthLastDay = new Date(end.getFullYear(), end.getMonth(), 0).getDate();
     d += prevMonthLastDay;
     m -= 1;
@@ -112,29 +151,129 @@ function updateDisplay() {
   els.minutes.textContent = diff.minutes.toLocaleString();
   els.seconds.textContent = diff.seconds.toLocaleString();
 }
-
-// Apply user input (interpreted as local datetime)
-els.applyBtn.addEventListener('click', () => {
-  const val = els.startInput.value;
-  if (!val) return;
-  const local = new Date(val);
-  if (isNaN(local)) return alert('Invalid date/time');
-  startDate = new Date(local.getTime());
-  els.startText.textContent = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-${String(startDate.getDate()).padStart(2,'0')} ${String(startDate.getHours()).padStart(2,'0')}:${String(startDate.getMinutes()).padStart(2,'0')}:00 (local)`;
-  updateDisplay();
-});
-
-// Reset to the Dec 8, 2024 06:18 default
-els.resetBtn.addEventListener('click', () => {
-  startDate = new Date(2024, 11, 8, 6, 18, 0);
-  els.startInput.value = toLocalDatetimeLocalInput(startDate);
-  els.startText.textContent = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-${String(startDate.getDate()).padStart(2,'0')} ${String(startDate.getHours()).padStart(2,'0')}:${String(startDate.getMinutes()).padStart(2,'0')}:00 (local)`;
-  updateDisplay();
-});
-
-// Start updates
 updateDisplay();
 setInterval(updateDisplay, 1000);
+
+/* ======= Bento grid image data =======
+  I collected four relevant pages during image search and included them as sources.
+  For robust embedding you'd replace each `src` with a direct image-file URL (e.g. a Wikimedia Commons file).
+  For now the thumbnails below are lightweight placeholders; captions link to the original pages.
+  Sources (from image search): see citations in the assistant message header.
+*/
+const imageCards = [
+  {
+    id: 'big',
+    className: 'big',
+    src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="%23050f16"/><text x="50%" y="50%" fill="%23cfe9ff" font-family="Arial" font-size="28" text-anchor="middle">Syrian Independence - crowd (1946)</text></svg>',
+    title: 'Syrian Independence Day, 1946 — crowd and flags',
+    link: 'https://syrianmemories.com/blogs/syrian-memories/syrian-independence-day-celebration-in-1946'
+  },
+  {
+    id: 'med1',
+    className: 'med1',
+    src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400"><rect width="100%" height="100%" fill="%23050f16"/><text x="50%" y="50%" fill="%23cfe9ff" font-family="Arial" font-size="20" text-anchor="middle">National Geographic: Aleppo citadel (1946)</text></svg>',
+    title: 'National Geographic image of Aleppo / citadel (1946)',
+    link: 'https://www.pinterest.com/pin/syria-and-lebanon-in-1946-national-geographic--397794579594595524/'
+  },
+  {
+    id: 'med2',
+    className: 'med2',
+    src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400"><rect width="100%" height="100%" fill="%23050f16"/><text x="50%" y="50%" fill="%23cfe9ff" font-family="Arial" font-size="20" text-anchor="middle">Damascus — aerial / modern view</text></svg>',
+    title: 'Damascus aerial / city scene (source page)',
+    link: 'https://www.clonline.org/en/current-events/articles/2016-04-01-return-to-damascus'
+  },
+  {
+    id: 'med3',
+    className: 'med3',
+    src: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400"><rect width="100%" height="100%" fill="%23050f16"/><text x="50%" y="50%" fill="%23cfe9ff" font-family="Arial" font-size="20" text-anchor="middle">Celebrations (2024) — crowd with flags</text></svg>',
+    title: 'Celebrations after 8 Dec 2024 — crowds with flags',
+    link: 'https://www.newarab.com/news/celebration-and-reflection-syrias-first-friday-without-assad'
+  },
+  // additional small cards (placeholders) — can be swapped for direct image URLs
+  { id:'s1', className:'small1', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%23050f16"/><text x="50%" y="50%" fill="%23cfe9ff" font-family="Arial" font-size="16" text-anchor="middle">Archive image</text></svg>', title:'Archive — Aleppo / parade', link:'https://fanack.com/syria/politics-of-syria/history-of-politics-in-syria-1946-2011/'},
+  { id:'s2', className:'small2', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%23050f16"/><text x="50%" y="50%" fill="%23cfe9ff" font-family="Arial" font-size="16" text-anchor="middle">Archive — flags</text></svg>', title:'Syrian flags & crowds', link:'https://nasseryouthmovement.net/United-Arab-Republic-3935/'},
+  { id:'s3', className:'small3', src:'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="100%" height="100%" fill="%23050f16"/><text x="50%" y="50%" fill="%23cfe9ff" font-family="Arial" font-size="16" text-anchor="middle">Modern celebrations</text></svg>', title:'Modern celebration / public square', link:'https://www.pinterest.com/pin/syria-and-lebanon-in-1946-national-geographic--397794579594595524/'}
+];
+
+// render cards
+imageCards.forEach(card => {
+  const div = document.createElement('div');
+  div.className = `bento-card ${card.className}`;
+  div.setAttribute('data-title', card.title);
+
+  const img = document.createElement('img');
+  img.src = card.src;
+  img.alt = card.title;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+
+  const cap = document.createElement('div');
+  cap.className = 'caption';
+  const a = document.createElement('a');
+  a.href = card.link;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  a.textContent = card.title;
+  a.className = 'source';
+
+  cap.appendChild(a);
+  div.appendChild(img);
+  div.appendChild(overlay);
+  div.appendChild(cap);
+
+  els.bento.appendChild(div);
+});
+
+/* ======= GSAP animations ======= */
+const tiles = document.querySelectorAll('.tile');
+const cards = document.querySelectorAll('.bento-card');
+
+// Entrance animation: tiles then grid cards
+gsap.from(tiles, {
+  y: 18,
+  opacity: 0,
+  stagger: 0.08,
+  duration: 0.6,
+  ease: "power3.out",
+  delay: 0.15
+});
+
+gsap.from(cards, {
+  scale: 0.96,
+  opacity: 0,
+  stagger: { each: 0.08, from: "start" },
+  duration: 0.7,
+  ease: "power3.out",
+  delay: 0.6
+});
+
+// subtle looping micro-animations to bring life
+gsap.to('.tile .n', {
+  y: -2,
+  repeat: -1,
+  yoyo: true,
+  duration: 2.5,
+  ease: "sine.inOut",
+  stagger: 0.15,
+  opacity: 1
+});
+
+// hover pop on cards
+cards.forEach((c) => {
+  c.addEventListener('mouseenter', () => gsap.to(c.querySelector('img'), { scale: 1.06, duration: 0.6, ease: 'power2.out' }));
+  c.addEventListener('mouseleave', () => gsap.to(c.querySelector('img'), { scale: 1.02, duration: 0.6, ease: 'power2.out' }));
+});
+
+/* Optional: click a card to open the source (already linked in caption). Could also make whole card clickable: */
+cards.forEach(c => {
+  c.addEventListener('click', (e) => {
+    // avoid clicks on caption link duplicating; only open if click outside the link
+    const link = c.querySelector('a');
+    if (e.target === link) return;
+    if (link && link.href) window.open(link.href, '_blank', 'noopener');
+  });
+});
 </script>
 </body>
 </html>
