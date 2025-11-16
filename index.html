@@ -75,4 +75,66 @@ function toLocalDatetimeLocalInput(d) {
   return local.toISOString().slice(0,16);
 }
 els.startInput.value = toLocalDatetimeLocalInput(startDate);
-els.startText.textContent = ${startDate.
+els.startText.textContent = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-${String(startDate.getDate()).padStart(2,'0')} ${String(startDate.getHours()).padStart(2,'0')}:${String(startDate.getMinutes()).padStart(2,'0')}:00 (local)`;
+
+// Calendar-aware difference
+function diffCalendar(start, end) {
+  // copies
+  let y = end.getFullYear() - start.getFullYear();
+  let m = end.getMonth() - start.getMonth();
+  let d = end.getDate() - start.getDate();
+  let hh = end.getHours() - start.getHours();
+  let mm = end.getMinutes() - start.getMinutes();
+  let ss = end.getSeconds() - start.getSeconds();
+
+  if (ss < 0) { ss += 60; mm -= 1; }
+  if (mm < 0) { mm += 60; hh -= 1; }
+  if (hh < 0) { hh += 24; d -= 1; }
+  if (d < 0) {
+    // borrow days from previous month relative to 'end'
+    const prevMonthLastDay = new Date(end.getFullYear(), end.getMonth(), 0).getDate();
+    d += prevMonthLastDay;
+    m -= 1;
+  }
+  if (m < 0) { m += 12; y -= 1; }
+
+  if (y < 0) return {years:0,months:0,days:0,hours:0,minutes:0,seconds:0};
+  return {years: y, months: m, days: d, hours: hh, minutes: mm, seconds: ss};
+}
+
+function updateDisplay() {
+  const now = new Date();
+  const diff = diffCalendar(startDate, now);
+  els.years.textContent = diff.years.toLocaleString();
+  els.months.textContent = diff.months.toLocaleString();
+  els.days.textContent = diff.days.toLocaleString();
+  els.hours.textContent = diff.hours.toLocaleString();
+  els.minutes.textContent = diff.minutes.toLocaleString();
+  els.seconds.textContent = diff.seconds.toLocaleString();
+}
+
+// Apply user input (interpreted as local datetime)
+els.applyBtn.addEventListener('click', () => {
+  const val = els.startInput.value;
+  if (!val) return;
+  const local = new Date(val);
+  if (isNaN(local)) return alert('Invalid date/time');
+  startDate = new Date(local.getTime());
+  els.startText.textContent = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-${String(startDate.getDate()).padStart(2,'0')} ${String(startDate.getHours()).padStart(2,'0')}:${String(startDate.getMinutes()).padStart(2,'0')}:00 (local)`;
+  updateDisplay();
+});
+
+// Reset to the Dec 8, 2024 06:18 default
+els.resetBtn.addEventListener('click', () => {
+  startDate = new Date(2024, 11, 8, 6, 18, 0);
+  els.startInput.value = toLocalDatetimeLocalInput(startDate);
+  els.startText.textContent = `${startDate.getFullYear()}-${String(startDate.getMonth()+1).padStart(2,'0')}-${String(startDate.getDate()).padStart(2,'0')} ${String(startDate.getHours()).padStart(2,'0')}:${String(startDate.getMinutes()).padStart(2,'0')}:00 (local)`;
+  updateDisplay();
+});
+
+// Start updates
+updateDisplay();
+setInterval(updateDisplay, 1000);
+</script>
+</body>
+</html>
