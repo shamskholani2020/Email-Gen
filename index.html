@@ -1,1 +1,78 @@
-asd
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>How Long Syria Has Been Free</title>
+<style>
+  :root{--bg:#0f1724;--card:#0b1220;--accent:#8ab4ff;--muted:#9aa7bf}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;color:#e6eef8;background:linear-gradient(180deg,var(--bg),#071022);}
+  .wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:32px}
+  .card{background:linear-gradient(180deg,var(--card),#071029);padding:28px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.7);max-width:720px;width:100%;}
+  h1{margin:0 0 8px 0;font-size:20px;color:var(--accent)}
+  p.lead{margin:0 0 16px 0;color:var(--muted)}
+  .counter{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+  .tile{flex:1 1 120px;background:rgba(255,255,255,0.02);padding:14px;border-radius:10px;text-align:center;min-width:120px}
+  .tile .n{font-size:20px;font-weight:700}
+  .tile .label{font-size:12px;color:var(--muted);margin-top:6px}
+  .controls{display:flex;gap:8px;align-items:center;margin-top:14px}
+  input[type=datetime-local]{background:#071026;border:1px solid rgba(255,255,255,0.04);color:#cfe6ff;padding:8px 10px;border-radius:8px}
+  button{background:linear-gradient(180deg,var(--accent),#6ea5ff);border:none;color:#05243a;padding:8px 12px;border-radius:8px;cursor:pointer}
+  small.note{display:block;margin-top:10px;color:var(--muted)}
+  footer{margin-top:14px;color:var(--muted);font-size:12px}
+  @media (max-width:480px){.tile{flex:1 1 45%}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card" role="main" aria-labelledby="title">
+      <h1 id="title">How long since Syria became free?</h1>
+      <p class="lead">Counting from the chosen date/time (default: <strong>Dec 8, 2024 — 06:18</strong>). The display updates every second.</p>
+
+      <div class="controls" aria-hidden="false">
+        <label for="start">Start date/time:</label>
+        <input id="start" type="datetime-local" aria-label="Start date and time">
+        <button id="apply">Apply</button>
+        <button id="reset">Reset</button>
+      </div>
+
+      <div class="counter" id="counter" aria-live="polite" aria-atomic="true">
+        <div class="tile"><div class="n" id="years">0</div><div class="label">years</div></div>
+        <div class="tile"><div class="n" id="months">0</div><div class="label">months</div></div>
+        <div class="tile"><div class="n" id="days">0</div><div class="label">days</div></div>
+        <div class="tile"><div class="n" id="hours">0</div><div class="label">hours</div></div>
+        <div class="tile"><div class="n" id="minutes">0</div><div class="label">minutes</div></div>
+        <div class="tile"><div class="n" id="seconds">0</div><div class="label">seconds</div></div>
+      </div>
+
+      <small class="note">Tip: pick another start date/time if you meant a different milestone.</small>
+      <footer>Start date used: <span id="startText">2024-12-08 06:18:00 (local)</span></footer>
+    </div>
+  </div>
+
+<script>
+// Elements
+const els = {
+  years: document.getElementById('years'),
+  months: document.getElementById('months'),
+  days: document.getElementById('days'),
+  hours: document.getElementById('hours'),
+  minutes: document.getElementById('minutes'),
+  seconds: document.getElementById('seconds'),
+  startInput: document.getElementById('start'),
+  applyBtn: document.getElementById('apply'),
+  resetBtn: document.getElementById('reset'),
+  startText: document.getElementById('startText')
+};
+
+// Default start date/time: Dec 8, 2024 06:18 local time
+let startDate = new Date(2024, 11, 8, 6, 18, 0); // month index: 0=Jan => 11 = Dec
+
+// Helper to set datetime-local input value from a Date (local)
+function toLocalDatetimeLocalInput(d) {
+  const tzOffset = d.getTimezoneOffset();
+  const local = new Date(d.getTime() - tzOffset*60000);
+  return local.toISOString().slice(0,16);
+}
+els.startInput.value = toLocalDatetimeLocalInput(startDate);
+els.startText.textContent = ${startDate.
